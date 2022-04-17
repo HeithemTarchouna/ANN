@@ -5,3 +5,5 @@ class LayerDense:
         self.activation_function = activation_function
         self.weights = None
         self.biases = None
+        self.inputs = None
+        self.outputs = None
