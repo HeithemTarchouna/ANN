@@ -32,7 +32,7 @@ class Model:
         l = 0
         for layer in self.layers:
             print(
-                f" Layer{l}                      {(layer.number_of_neurons, 1)}                    {layer.weights.shape[0] * layer.weights.shape[1] + layer.biases.shape[0]}        ")
+                f" Layer{l}                      {(1, layer.number_of_neurons)}                    {layer.weights.shape[0] * layer.weights.shape[1] + layer.biases.shape[0]}        ")
             l = l + 1
 
     def fit(self, X, y, epochs):
