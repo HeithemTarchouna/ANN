@@ -1,11 +1,10 @@
-# Single neuron
 import numpy as np
 from layers import Dense
 import nnfs
 from nnfs.datasets import spiral_data
 import activations
-import matplotlib.pyplot as plt
-import math
+import losses
+import metrics
 
 nnfs.init()
 
@@ -18,9 +17,10 @@ dense1 = Dense(2, 3, activation=activations.relu)
 # perform forward pass
 dense1.forward(X)
 
-
 dense2 = Dense(3, 3, activation=activations.softmax)
 
 dense2.forward(dense1.output)
 
-print(dense2.output[:5])
+loss_function = losses.SparseCategoricalCrossentropy()
+loss = loss_function.forward(dense2.output, y)
+print(metrics.Accuracy.calculate(dense2.output, y))
