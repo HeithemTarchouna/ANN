@@ -22,5 +22,10 @@ dense2 = Dense(3, 3, activation=activations.softmax)
 dense2.forward(dense1.output)
 
 loss_function = losses.SparseCategoricalCrossentropy()
-loss = loss_function.forward(dense2.output, y)
+loss = loss_function.calculate(dense2.output, y)
+print(f"loss:{loss}")
 print(metrics.Accuracy.calculate(dense2.output, y))
+
+
+
+
