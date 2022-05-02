@@ -13,7 +13,7 @@ nnfs.init()
 X, y = vertical_data(samples=100, classes=3)
 plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap='brg')
 
-# helper variables
+# helper variabless
 epochs = 1000
 best_weights_l1 = None
 best_biases_l1 = None
