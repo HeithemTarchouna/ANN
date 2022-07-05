@@ -78,47 +78,33 @@ z = xw0 + xw1 + xw2 + b
 y = activations.relu(z)
 
 # Backward pass
-
 # The derivative from the next layer
 dvalue = 1.0
 
-# Derivative of Relu and the chain rule
-drelu_dz = dvalue * (1. if z > 0 else 0.)
+# Partial derivates: the chain rule : wrt to inputs
 
-# Partial derivates of the summation , the chain rule : wrt weighted inputs
-dsum_dxw0 = 1
-dsum_dxw1 = 1
-dsum_dxw2 = 1
+drelu_dx0 = dvalue * (1. if z > 0 else 0.) * w[0]
+drelu_dx1 = dvalue * (1. if z > 0 else 0.) * w[1]
+drelu_dx2 = dvalue * (1. if z > 0 else 0.) * w[2]
 
-drelu_dxw0 = drelu_dz * dsum_dxw0
-drelu_dxw1 = drelu_dz * dsum_dxw1
-drelu_dxw2 = drelu_dz * dsum_dxw2
+dx = [drelu_dx0, drelu_dx1, drelu_dx2]  # gradients on inputs
 
-# Partial derivates : the chain rule : wrt bias
-dsum_db = 1
-drelu_db = drelu_dz * dsum_db
-# Partial derivates of the multiplication , the chain rule : wrt to inputs
-dmul_dx0 = w[0]
-dmul_dx1 = w[1]
-dmul_dx2 = w[2]
+print("gradient wrt inputs")
+print(dx)
 
-drelu_dx0 = drelu_dxw0 * dmul_dx0
-drelu_dx1 = drelu_dxw1 * dmul_dx1
-drelu_dx2 = drelu_dxw2 * dmul_dx2
-print("loss wrt inputs")
-print(drelu_dx0)
-print(drelu_dx1)
-print(drelu_dx2)
+# Partial derivates: the chain rule : wrt to weights
+drelu_dw0 = dvalue * (1. if z > 0 else 0.) * x[0]
+drelu_dw1 = dvalue * (1. if z > 0 else 0.) * x[1]
+drelu_dw2 = dvalue * (1. if z > 0 else 0.) * x[2]
 
-# Partial derivates of the multiplication , the chain rule : wrt to weights
-dmul_dw0 = x[0]
-dmul_dw1 = x[1]
-dmul_dw2 = x[2]
+dw = [drelu_dw0, drelu_dw1, drelu_dw2]  # gradients on weights
 
-drelu_dw0 = drelu_dxw0 * dmul_dw0
-drelu_dw1 = drelu_dxw1 * dmul_dw1
-drelu_dw2 = drelu_dxw2 * dmul_dw2
-print("loss wrt weight")
-print(drelu_dw0)
-print(drelu_dw1)
-print(drelu_dw2)
+print("gradient wrt weight")
+print(dw)
+
+# Partial derivates: the chain rule : wrt to bias
+drelu_db = dvalue * (1. if z > 0 else 0.)
+db = drelu_db  # gradient on bias...just 1 bias here.
+
+print("gradient wrt bias")
+print(db)
