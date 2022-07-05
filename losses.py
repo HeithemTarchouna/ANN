@@ -19,6 +19,14 @@ class Loss:
         y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
         return y_pred_clipped
 
+    def forward(self, y_pred, y_true):
+        """
+        Calculates the loss value
+        :param y_pred: the predicted values
+        :param y_true: the true labels
+        :return: the loss value
+        """
+        pass
 
 
 class SparseCategoricalCrossentropy(Loss):
@@ -39,7 +47,7 @@ class SparseCategoricalCrossentropy(Loss):
 class CategoricalCrossentropy(Loss):
     def forward(self, y_pred, y_true):
         if len(y_true.shape) == 1:
-            raise Exception("Target has to use One-Hot-Encoding.")
+            raise Exception("Target has to use One-Hot-Encoding.use SparseCategoricalCrossentropy instead.")
         y_pred_clipped = self.preprocess_croos_entropy(y_pred)
 
         # confidence for the true target_class/ probability associated with true label

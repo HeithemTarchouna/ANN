@@ -1,4 +1,6 @@
 import numpy as np
+
+import layers
 from layers import Dense
 import nnfs
 from nnfs.datasets import vertical_data
@@ -9,53 +11,52 @@ import matplotlib.pyplot as plt
 
 nnfs.init()
 
-# create a dataset
+# Create dataset
 X, y = vertical_data(samples=100, classes=3)
-plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap='brg')
-
-# helper variabless
-epochs = 1000
-best_weights_l1 = None
-best_biases_l1 = None
-best_weights_l2 = None
-best_biases_l2 = None
-
-best_loss = np.inf
-
-# create the model
-# create a dense layer with 2 input features and 3 output values
-dense1 = Dense(2, 3, activation=activations.relu)
-dense2 = Dense(3, 3, activation=activations.softmax)
-# create the loss function
+# Create model
+dense1 = layers.Dense(2, 3, activation=activations.relu)  # first dense layer, 2 inputs
+dense2 = layers.Dense(3, 3, activation=activations.softmax)  # second dense layer, 3 inputs, 3 outputs
 loss_function = losses.SparseCategoricalCrossentropy()
 
+# Helper variables
+lowest_loss = float("inf")  # some initial value
+best_dense1_weights = dense1.weights.copy()
+best_dense1_biases = dense1.biases.copy()
+best_dense2_weights = dense2.weights.copy()
+best_dense2_biases = dense2.biases.copy()
+epochs = 1000
 
-for cur_epoch in range(epochs):
-    dense1.weights += 0.05 * np.random.randn(2, 3)
-    dense1.biases += 0.05 * np.random.randn(1, 3)
-    dense2.weights += 0.05 * np.random.randn(3, 3)
-    dense2.biases += 0.05 * np.random.randn(1, 3)
-
-    # perform forward pass
+for epoch_i in range(epochs):
     dense1.forward(X)
     dense2.forward(dense1.output)
+    loss_value = loss_function.calculate(dense2.output, y)
+    if loss_value < lowest_loss:
+        lowest_loss = loss_value
+        # print(f"New weights found at epoch {epoch_i}")
+        # print(f"New lowest loss =  {lowest_loss}")
+        # # print(f"Current Accuracy = {metrics.Accuracy().result(dense2.output, y)  }")
+        # print(f"-------------------------------------------")
 
-    loss = loss_function.calculate(dense2.output, y)
-    accuracy = metrics.Accuracy.result(dense2.output, y)
-    if loss <= best_loss:
-        print(f'new set of weights found : epoch {cur_epoch}')
-        print(f'old loss = {best_loss}... new loss = {loss}')
-        print(f'current accuracy {accuracy}')
-        best_loss = loss
-        best_weights_l1 = dense1.weights.copy()
-        best_biases_l1 = dense1.biases.copy()
-        best_weights_l2 = dense2.weights.copy()
-        best_biases_l2 = dense2.biases.copy()
+        best_dense1_weights = dense1.weights.copy()
+        best_dense1_biases = dense1.biases.copy()
+        best_dense2_weights = dense2.weights.copy()
+        best_dense2_biases = dense2.biases.copy()
     else:
-        dense1.weights = best_weights_l1.copy()
-        dense1.biases = best_biases_l1.copy()
-        dense2.weights = best_weights_l2.copy()
-        dense2.biases = best_biases_l2.copy()
+        dense1.weights = best_dense1_weights.copy()
+        dense2.weights = best_dense2_weights.copy()
+        dense1.biases = best_dense1_biases.copy()
+        dense2.biases = best_dense2_biases.copy()
 
+        if epoch_i < epochs - 1:
+            # generate new weights
+            dense1.weights += 0.05 * np.random.randn(2, 3)
+            dense1.biases += 0.05 * np.random.randn(1, 3)
+            dense2.weights += 0.05 * np.random.randn(3, 3)
+            dense2.biases += 0.05 * np.random.randn(1, 3)
+print("Best Results")
+print(f"Lowest loss = {lowest_loss}")
 
-
+dense1.forward(X)
+dense2.forward(dense1.output)
+loss_value = loss_function.calculate(dense2.output, y)
+print(metrics.Accuracy.result(y_pred=dense2.output, y_true=y))
